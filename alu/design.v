@@ -1,5 +1,5 @@
 
-module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*width) 
+module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*width)
 
   (
    
@@ -20,7 +20,7 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
   reg signed [(width-1):0] a;
   reg signed  [(width-1):0] b;
   integer count=1;
-
+  integer count1=0;
   always@(posedge CLK or posedge RST)
           begin
   if(CE)                   // If clock enable is active high then check for other control signals
@@ -35,7 +35,7 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
           L=1'b0;
           ERR=1'b0;
           end
-  
+ 
   else if(MODE)          // Reset signal is active low. If MODE signal is high, then this is an Arithmetic Operation
           begin
           RES={out_width{1'b0}};
@@ -47,110 +47,140 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
           ERR=1'b0;
   case(CMD)             // CMD is the binary code value of the Arithmetic Operation
          4'b0000:             // CMD = 0000: ADD 
-         begin
+   begin
           if(inp_valid==2'b11)
           begin
-         RES=OPA+OPB;
-          COUT=RES[width]?1:0;
+        if(count1==0)
+         temp=OPA+OPB;
+        if(count1==1) begin
+                RES=temp;
+          COUT=RES[width]?1:0; end
           end
           else
-          ERR=1'b1;
+          if(count1==1) ERR=1'b1;
           end
           4'b0001:             // CMD = 0001: SUB
           begin
           if(inp_valid==2'b11)
           begin
-          OFLOW=(OPA<OPB)?1:0;
-          RES=OPA-OPB;
+        if(count1==0)
+          temp=OPA-OPB;
+        if(count1==1)   begin
+        RES=temp;
+          OFLOW=(OPA<OPB)?1:0;   end
           end
           else
-          ERR=1'b1;
+          if(count1==1) ERR=1'b1;
           end
           4'b0010:             // CMD = 0010: ADD_CIN
           begin
           if(inp_valid==2'b11)
           begin
-          RES=OPA+OPB+CIN;
-          COUT=RES[width]?1:0;
+        if(count1==0)
+          temp=OPA+OPB+CIN;
+        if(count1==1)  begin
+          RES=temp;
+          COUT=RES[width]?1:0;  end
           end
           else
-          ERR=1'b1;
+          if(count1==1) ERR=1'b1;
          end
          4'b0011:             // CMD = 0011: SUB_CIN. Here we set the overflow flag
          begin
          if(inp_valid==2'b11)
         begin
-         OFLOW=(OPA<OPB)?1:0;
-         RES=OPA-OPB-CIN;
-         end
-         else
-         ERR=1'b1;
+        if(count1==0)
+         temp=OPA-OPB-CIN;
+        if(count1==1) begin
+        RES=temp;
+COUT=RES[width]?1:0;  end
+          end
+          else
+          if(count1==1) ERR=1'b1;
          end
          4'b0100:
          begin
          if(inp_valid==2'b01 ||inp_valid==2'b11)
          begin
-         RES=OPA+1;
+        if(count1==0)
+         temp=OPA+1;
+        if(count1==1)
+        RES=temp;
          end
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
          end    // CMD = 0100: INC_A
           4'b0101:
            begin
           if(inp_valid==2'b01 ||inp_valid ==2'b11)
           begin
-          RES=OPA-1;    // CMD = 0101: DEC_A
+        if(count1==0)
+          temp=OPA-1;    // CMD = 0101: DEC_A
+        if(count1==1)
+        RES=temp;
           end
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
          end
          4'b0110:
          begin
          if(inp_valid==2'b10 ||inp_valid==2'b11)
-         RES=OPB+1;    // CMD = 0110: INC_B
+        if(count1==0)
+         temp=OPB+1;    // CMD = 0110: INC_B
+        if(count1==1)
+RES=temp;
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
          end
          4'b0111:
          begin
          if(inp_valid==2'b10 ||inp_valid==2'b11)
-         RES=OPB-1;    // CMD = 0111: DEC_B
+        if(count1==0)
+         temp=OPB-1;    // CMD = 0111: DEC_B
+        if(count1==1)
+        RES=temp;
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
          end
          4'b1000:              // CMD = 1000: CMP
          begin
          RES={out_width{1'b0}};
+        if(count1==0)  begin
          if(inp_valid==2'b11)
          begin
+        
+ 
  if(OPA==OPB)
          begin
+        if(count1==1) begin
          E=1'b1;
          G=1'b0;
-         L=1'b0;
+         L=1'b0;  end
          end
  else if(OPA>OPB)
          begin
+        if(count1==1) begin
          E=1'b0;
          G=1'b1;
-         L=1'b0;
+         L=1'b0; end
          end
          else
          begin
+        if(count1==1)  begin
          E=1'b0;
          G=1'b0;
-         L=1'b1;
+         L=1'b1; end
          end
          end
+        end
          else
-                ERR=1'b1;
+         if(count1==1) ERR=1'b1;
+        
          end
         4'b1001:
          begin
                  if(inp_valid==11 )
                    begin
-         /*              if(count==3 ) begin
-                                 RES={(OPA+1)*(OPB+1)};*/
                          if(count==2)
                          begin
                          temp={(OPA+1)*(OPB+1)};
@@ -158,64 +188,65 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
                          if(count==3)
                          begin
                          RES=temp;
-                         ERR=1'b0;
+                         if(count1==1) ERR=1'b0;
                          end
  
                  end
                  else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
-                         RES=16'b0;
-                         ERR=1'b1;
+                         RES={out_width{1'b0}};
+
+                         if(inp_valid==2'b11)
+                         if(count1==1) ERR=1'b1;
                          end
                  else
-                         ERR=1'b0;
+                         if(count1==1) ERR=1'b0;
          end
          4'b1010:
          begin
                  if(inp_valid==11)
                  begin
- 
-                 /*      
-                         if(count==3) begin
-                                 RES={(OPA>>1)*OPB};
-                                 ERR=1'bz;
-                             end */
-                         if(count==2)
+
+                        if(count==2)
                         begin
                          temp={(OPA>>1)*OPB};
                          end
                          if(count==3)
                          begin
                          RES=temp;
-                         ERR=1'b0;
-                     end
+                         if(count1==1) ERR=1'b0;
+                         end
                 end
  
   else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
                          RES=16'b0;
-                         ERR=1'b1;
+                         if(count1==1) ERR=1'b1;
                          end
                  else
                          begin
-                         ERR=1'b0;
- 
+                         if(count1==1) ERR=1'b0;
+
                          end
  
          end
-        
+ 
  4'b1011 :
          begin
          if(inp_valid==2'b11)
          begin
+        if(count1==0) begin
          a=OPA;
          b=OPB;
-         RES={a+b};
+         temp={a+b};end
+        if(count1==1) begin
+        RES=temp;
          if(RES[width]==1'b1)
          OFLOW=1'b1;
          else
-         OFLOW=1'b0;
+         OFLOW=1'b0;end
          end
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
+        if(count1==1) begin
          if(a==b)
          begin
          E=1'b1;
@@ -230,25 +261,31 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
          end
          else
          begin
-         E=1'b0;
+ E=1'b0;
          G=1'b0;
          L=1'b1;
          end
          end
-         
+        end
+ 
  4'b1100: begin
           if(inp_valid==2'b11)
          begin
+        if(count1==0)  begin
          a=OPA;
          b=OPB;
-         RES={a-b};
+         temp={a-b};   end
+        if(count1==1) begin
+        RES=temp;
          if(RES[out_width]==1'b1)
          OFLOW=1'b1;
          else
          OFLOW=1'b0;
          end
+        end
          else
-         ERR=1'b1;
+         if(count1==1) ERR=1'b1;
+        if(count1==1)  begin
          if(a==b)
          begin
          E=1'b1;
@@ -268,9 +305,8 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
          L=1'b1;
          end
          end
- 
- 
-         default:   // For any other case send high impedence value
+        end
+  default:   // For any other case send high impedence value
          begin
          RES={out_width{1'b0}};
          COUT=1'b0;
@@ -293,86 +329,124 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
          E=1'b0;
          L=1'b0;
          ERR=1'b0;
-         
- case(CMD) 
+ 
+ case(CMD)
   // CMD is the binary code value of the Logical Operation
  
  4'b0000:begin
  if(inp_valid==2'b11)
- RES={1'b0,OPA&OPB};
+        if(count1==0)
+ temp={1'b0,OPA&OPB};
+        if(count1==1)
+        RES=temp;
  else
- ERR=1'b1;     // CMD = 0000: AND
+ if(count1==1) ERR=1'b1;     // CMD = 0000: AND
  end
  4'b0001:begin
   if(inp_valid==2'b11)
-  RES={1'b0,~(OPA&OPB)};
+        if(count1==0)
+  temp={1'b0,~(OPA&OPB)};
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end  // CMD = 0001: NAND
  4'b0010:begin
   if(inp_valid==2'b11)
-  RES={1'b0,OPA|OPB};     // CMD = 0010: OR
+        if(count1==0)
+temp={1'b0,OPA|OPB};     // CMD = 0010: OR
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b0011:begin
   if(inp_valid==2'b11)
-  RES={1'b0,~(OPA|OPB)};  // CMD = 0011: NOR
+        if(count1==0)
+  temp={1'b0,~(OPA|OPB)};  // CMD = 0011: NOR
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b0100:begin
   if(inp_valid==2'b11)
-  RES={1'b0,OPA^OPB};     // CMD = 0100: XOR
+        if(count1==0)
+  temp={1'b0,OPA^OPB};     // CMD = 0100: XOR
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b0101:begin
   if(inp_valid==2'b11)
-  RES={1'b0,~(OPA^OPB)};  // CMD = 0101: XNOR
+        if(count1==0)
+  temp={1'b0,~(OPA^OPB)};  // CMD = 0101: XNOR
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b0110:begin
   if(inp_valid==2'b01 ||inp_valid==2'b11)
-  RES={1'b0,~OPA};        // CMD = 0110: NOT_A
+        if(count1==0)
+  temp={1'b0,~OPA};        // CMD = 0110: NOT_A
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b1000:begin
-  if(inp_valid==2'b01 ||inp_valid==2'b11)
-  RES={1'b0,OPA>>1};      // CMD = 1000: SHR1_A
+ if(inp_valid==2'b01 ||inp_valid==2'b11)
+        if(count1==0)
+
+  temp={1'b0,OPA>>1};      // CMD = 1000: SHR1_A
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
-                                                                
+ 
  4'b1001:begin
   if(inp_valid==2'b01 ||inp_valid==2'b11)
-  RES={1'b0,OPA<<1};      // CMD = 1001: SHL1_A
+        if(count1==0)
+  temp={1'b0,OPA<<1};      // CMD = 1001: SHL1_A
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  
  
  4'b0111:begin
   if(inp_valid==2'b10 ||inp_valid==2'b11)
-  RES={1'b0,~OPB};        // CMD = 0111: NOT_B
+        if(count1==0)
+  temp={1'b0,~OPB};        // CMD = 0111: NOT_B
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  
  4'b1010:begin
  if(inp_valid==2'b10 ||inp_valid==2'b11)
-  RES={1'b0,OPB>>1};      // CMD = 1010: SHR1_B
+        if(count1==0)
+  temp={1'b0,OPB>>1};      // CMD = 1010: SHR1_B
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
  4'b1011:begin
   if(inp_valid==2'b10 ||inp_valid==2'b11)
-  RES={1'b0,OPB<<1};      // CMD = 1011: SHL1_B
+        if(count1==0)
+  temp={1'b0,OPB<<1};      // CMD = 1011: SHL1_B
+        if(count1==1)
+        RES=temp;
   else
-  ERR=1'b1;
+  if(count1==1) ERR=1'b1;
   end
+ 
  
  /*
 
@@ -431,80 +505,117 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4 ,out_width=2*wi
           end
         
            */
-           
-           
     4'b1100:      begin
-          
+ 
     OPB_1 = OPB % width;
-
     if (inp_valid == 2'b11) begin   // CMD = 1100: ROL_A_B
-
         case (OPB[2:0])
-
-            3'b000: RES = {{width{1'b0}}, OPA};
-
-            3'b001: RES = {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
-
-            3'b010: RES = {{width{1'b0}}, {OPA[width-3:0], OPA[width-1:width-2]}};
-
-            3'b011: RES = {{width{1'b0}}, {OPA[width-4:0], OPA[width-1:width-3]}};
-
-            default: begin
-                if (OPB_1 == 0)
-                    RES = {{width{1'b0}}, OPA};
-                else
-                    RES = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+            3'b000: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, OPA};
+                if(count1==1)
+                    RES = temp;
             end
-
+            3'b001: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
+                if(count1==1)
+                    RES = temp;
+            end
+            3'b010: begin
+                if(count1==0) begin
+                    if(OPB_1 == 0)
+                        temp = {{width{1'b0}}, OPA};
+                    else
+                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                end
+                if(count1==1)
+                    RES = temp;
+            end
+            3'b011: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                if(count1==1)
+                    RES = temp;
+            end
+            default: begin
+                if(count1==0) begin
+                    if (OPB_1 == 0)
+                        temp = {{width{1'b0}}, OPA};
+                    else
+                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                end
+                if(count1==1)
+                    RES = temp;
+            end
+        endcase
+ 
+        if (width > 4 && OPB[width-1:4] != 0)
+            if(count1==1) ERR = 1'b1;
+        else
+            if(count1==1) ERR = 1'b0;
+    end
+    else begin
+        if(count1==1) ERR = 1'b1;
+    end
+end
+ 
+4'b1101: begin                   // CMD = 1101: ROR_A_B 
+    OPB_1 = OPB % width;
+    if (inp_valid == 2'b11) begin
+        case (OPB[2:0])
+            3'b000: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, OPA};
+                if(count1==1)
+                    RES = temp;
+            end
+            3'b001: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
+                if(count1==1)
+                    RES = temp;
+            end
+            3'b010: begin
+                if(count1==0) begin
+                    if(OPB_1 == 0)
+                        temp = {{width{1'b0}}, OPA};
+                    else
+                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                end
+                if(count1==1)
+                    RES = temp;
+            end
+            3'b011: begin
+                if(count1==0)
+                    temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                if(count1==1)
+                    RES = temp;
+            end
+            default: begin
+                if(count1==0) begin
+                    if (OPB_1 == 0)
+                        temp = {{width{1'b0}}, OPA};
+                    else
+                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                end
+                if(count1==1)
+                    RES = temp;
+            end
         endcase
 
-   
+ 
         if (width > 4 && OPB[width-1:4] != 0)
-            ERR = 1'b1;
+            if(count1==1) ERR = 1'b1;
         else
-            ERR = 1'b0;
+            if(count1==1) ERR = 1'b0;
 
     end
     else begin
-        ERR = 1'b1;
+        if(count1==1) ERR = 1'b1;
     end
 end
-
-4'b1101:     begin                   // CMD = 1101: ROR_A_B 
-         OPB_1 = OPB % width;
-
-    if (inp_valid == 2'b11) begin  
-        case (OPB[2:0])
-
-            3'b000: RES = {{width{1'b0}}, OPA};
-
-            3'b001: RES = {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
-
-            3'b010: RES = {{width{1'b0}}, {OPA[1:0], OPA[width-1:2]}};
-
-            3'b011: RES = {{width{1'b0}}, {OPA[2:0], OPA[width-1:3]}};
-
-            default: begin
-                if (OPB_1 == 0)
-                    RES = {{width{1'b0}}, OPA};
-                else
-                    RES = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
-            end
-
-        endcase
-
-        
-        if (width > 4 && OPB[width-1:4] != 0)
-            ERR = 1'b1;
-        else
-            ERR = 1'b0;
-
-    end
-    else begin
-        ERR = 1'b1;
-    end
-end
-        
+ 
          default:    // For any other case send high impedence value
          begin
          RES={out_width{1'b0}};
@@ -517,9 +628,9 @@ end
          end
          endcase
          end
-      end 
       end
-      
+      end
+ 
 always@(posedge CLK or posedge RST)
  begin
  if(RST)
@@ -535,6 +646,15 @@ always@(posedge CLK or posedge RST)
          count<=1;
       end
   end
+
+always@(posedge CLK or posedge RST)
+begin
+        if(RST)
+        count1<=0;
+        else
+        if(count1<=1)
+ count1=count1+1;
+        else
+        count1<=0;
+        end
         endmodule
- 
-                      

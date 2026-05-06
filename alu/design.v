@@ -196,58 +196,40 @@ COUT<=RES[width]?1:0;
          ERR<=1'b1;
         
          end
-        4'b1001:
-         begin
-                 if(inp_valid==11 )
-                   begin
-                        // if(count==2)
-                        // begin
-                           temp={(OPA+1'b1)*(OPB+1'b1)};
-                       //  end
-                        // if(count==3)
-                       //  begin
-                         RES<=temp;
-                         ERR<=1'b0;
-                       //  end
- 
-                 end
-                 else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
-                         RES<={out_width{1'b0}};
-
-                         if(inp_valid==2'b11)
-                         ERR<=1'b1;
-                         end
-                 else
-                         ERR<=1'b0;
-         end
-         4'b1010:
-         begin
-                 if(inp_valid==11)
-                 begin
-
-                       // if(count==2)
-                      //  begin
-                         temp={(OPA>>1)*OPB};
-                      //   end
-                       //  if(count==3)
-                         //begin
-                         RES<=temp;
-                         ERR<=1'b0;
-                      //   end
-                end
- 
-  else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
-                         RES<=16'b0;
-                         ERR<=1'b1;
-                         end
-                 else
-                         begin
-                         ERR<=1'b0;
-
-                         end
- 
-         end
- 
+       4'b1001:
+begin
+    if(inp_valid == 2'b11)
+    begin
+    if(count==2)
+        temp = (OPA + 1'b1) * (OPB + 1'b1);
+    if(count==3) begin
+        RES  <= temp;
+        ERR  <= 1'b0;
+        end
+    end
+    else
+    begin
+        RES  <= {out_width{1'b0}};
+        ERR  <= 1'b1;
+    end
+end
+       4'b1010:
+begin
+    if(inp_valid == 2'b11)
+    begin
+    if(count==2)
+        temp <= (OPA >>1)*OPB;
+    if(count==3) begin
+        RES  <= temp;
+        ERR  <= 1'b0;
+        end
+    end
+    else
+    begin
+        RES  <= {out_width{1'b0}};
+        ERR  <= 1'b1;
+    end
+end
  4'b1011 :
          begin
          if(inp_valid==2'b11)

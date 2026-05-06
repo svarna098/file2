@@ -91,9 +91,9 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
    begin
           if(inp_valid==2'b11)
           begin
-         temp<=OPA+OPB;
-          RES<=temp;
-            COUT<=RES[width]?1:0; end
+         temp=OPA+OPB;
+         RES<=temp;
+          COUT<=RES[width]?1:0; end
           else
           ERR<=1'b1;
           end
@@ -101,7 +101,7 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
           begin
           if(inp_valid==2'b11)
           begin
-         temp<=OPA-OPB;
+         temp=OPA-OPB;
         RES<=temp;
           OFLOW<=(OPA<OPB)?1:0;   end
           else
@@ -111,7 +111,7 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
           begin
           if(inp_valid==2'b11)
           begin
-          temp<=OPA+OPB+CIN;
+          temp=OPA+OPB+CIN;
           RES<=temp;
           COUT<=RES[width]?1:0;
           end
@@ -122,7 +122,7 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
          begin
          if(inp_valid==2'b11)
         begin
-         temp<=OPA-OPB-CIN;
+         temp=OPA-OPB-CIN;
         RES<=temp;
 COUT<=RES[width]?1:0;
           end
@@ -133,7 +133,7 @@ COUT<=RES[width]?1:0;
          begin
          if(inp_valid==2'b01 ||inp_valid==2'b11)
          begin
-         temp<=OPA+1;
+         temp=OPA+1;
         RES<=temp;
          end
          else
@@ -143,7 +143,7 @@ COUT<=RES[width]?1:0;
            begin
           if(inp_valid==2'b01 ||inp_valid ==2'b11)
           begin
-          temp<=OPA-1;    // CMD = 0101: DEC_A
+          temp=OPA-1;    // CMD = 0101: DEC_A
         RES<=temp;
           end
          else
@@ -153,7 +153,7 @@ COUT<=RES[width]?1:0;
          begin
          if(inp_valid==2'b10 ||inp_valid==2'b11)
          begin
-         temp<=OPB+1;    // CMD = 0110: INC_B
+         temp=OPB+1;    // CMD = 0110: INC_B
         RES<=temp; end
          else
          ERR<=1'b1;
@@ -161,7 +161,7 @@ COUT<=RES[width]?1:0;
          4'b0111:
          begin
          if(inp_valid==2'b10 ||inp_valid==2'b11) begin
-         temp<=OPB-1;    // CMD = 0111: DEC_B
+         temp=OPB-1;    // CMD = 0111: DEC_B
         RES<=temp;  end
          else
          ERR<=1'b1;
@@ -200,15 +200,15 @@ COUT<=RES[width]?1:0;
          begin
                  if(inp_valid==11 )
                    begin
-                         if(count==2)
-                         begin
-                           temp<={(OPA+1'b1)*(OPB+1'b1)};
-                         end
-                         if(count==3)
-                         begin
+                        // if(count==2)
+                        // begin
+                           temp={(OPA+1'b1)*(OPB+1'b1)};
+                       //  end
+                        // if(count==3)
+                       //  begin
                          RES<=temp;
                          ERR<=1'b0;
-                         end
+                       //  end
  
                  end
                  else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
@@ -225,15 +225,15 @@ COUT<=RES[width]?1:0;
                  if(inp_valid==11)
                  begin
 
-                        if(count==2)
-                        begin
-                         temp<={(OPA>>1)*OPB};
-                         end
-                         if(count==3)
-                         begin
+                       // if(count==2)
+                      //  begin
+                         temp={(OPA>>1)*OPB};
+                      //   end
+                       //  if(count==3)
+                         //begin
                          RES<=temp;
                          ERR<=1'b0;
-                         end
+                      //   end
                 end
  
   else if(inp_valid==01 ||inp_valid ==10||inp_valid==00) begin
@@ -254,7 +254,7 @@ COUT<=RES[width]?1:0;
          begin
          a<=OPA;
          b<=OPB;
-         temp<={a+b};
+         temp={a+b};
         RES<=temp;
          if(RES[width]==1'b1)
          OFLOW<=1'b1;
@@ -288,7 +288,7 @@ COUT<=RES[width]?1:0;
          begin
          a<=OPA;
          b<=OPB;
-         temp<={a-b};
+         temp={a-b};
         RES<=temp;
          if(RES[width]==1)
          OFLOW<=1'b1;
@@ -345,49 +345,49 @@ COUT<=RES[width]?1:0;
  
  4'b0000:begin
  if(inp_valid==2'b11) begin
- temp<={1'b0,OPA&OPB};
+ temp={1'b0,OPA&OPB};
         RES<=temp; end
  else
  ERR<=1'b1;     // CMD = 0000: AND
  end
  4'b0001:begin
   if(inp_valid==2'b11) begin
-  temp<={1'b0,~(OPA&OPB)};
+  temp={1'b0,~(OPA&OPB)};
         RES<=temp; end
   else
   ERR<=1'b1;
   end  // CMD = 0001: NAND
  4'b0010:begin
   if(inp_valid==2'b11) begin
-temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
+temp={1'b0,OPA|OPB};     // CMD = 0010: OR
         RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b0011:begin
   if(inp_valid==2'b11) begin
-  temp<={1'b0,~(OPA|OPB)};  // CMD = 0011: NOR
+  temp={1'b0,~(OPA|OPB)};  // CMD = 0011: NOR
         RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b0100:begin
   if(inp_valid==2'b11) begin
-  temp<={1'b0,OPA^OPB};     // CMD = 0100: XOR
+  temp={1'b0,OPA^OPB};     // CMD = 0100: XOR
         RES<=temp;  end
   else
   ERR<=1'b1;
   end
  4'b0101:begin
   if(inp_valid==2'b11) begin
-  temp<={1'b0,~(OPA^OPB)};  // CMD = 0101: XNOR
+  temp={1'b0,~(OPA^OPB)};  // CMD = 0101: XNOR
         RES<=temp;  end 
   else
   ERR<=1'b1;
   end
  4'b0110:begin
   if(inp_valid==2'b01 ||inp_valid==2'b11)  begin
-  temp<={1'b0,~OPA};        // CMD = 0110: NOT_A
+  temp={1'b0,~OPA};        // CMD = 0110: NOT_A
         RES<=temp; end 
   else
   ERR<=1'b1;
@@ -395,7 +395,7 @@ temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
  4'b1000:begin
  if(inp_valid==2'b01 ||inp_valid==2'b11) begin
 
-  temp<={1'b0,OPA>>1};      // CMD = 1000: SHR1_A
+  temp={1'b0,OPA>>1};      // CMD = 1000: SHR1_A
         RES<=temp; end 
   else
   ERR<=1'b1;
@@ -403,7 +403,7 @@ temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
  
  4'b1001:begin
   if(inp_valid==2'b01 ||inp_valid==2'b11) begin
-  temp<={1'b0,OPA<<1};      // CMD = 1001: SHL1_A
+  temp={1'b0,OPA<<1};      // CMD = 1001: SHL1_A
         RES<=temp;  end
         
   else 
@@ -413,7 +413,7 @@ temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
  
  4'b0111:begin
   if(inp_valid==2'b10 ||inp_valid==2'b11) begin
-  temp<={1'b0,~OPB};        // CMD = 0111: NOT_B
+  temp={1'b0,~OPB};        // CMD = 0111: NOT_B
         RES<=temp;  end
   else
   ERR<=1'b1;
@@ -421,14 +421,14 @@ temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
  
  4'b1010:begin
  if(inp_valid==2'b10 ||inp_valid==2'b11) begin
-  temp<={1'b0,OPB>>1};      // CMD = 1010: SHR1_B
+  temp={1'b0,OPB>>1};      // CMD = 1010: SHR1_B
         RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b1011:begin
   if(inp_valid==2'b10 ||inp_valid==2'b11) begin
-  temp<={1'b0,OPB<<1};      // CMD = 1011: SHL1_B
+  temp={1'b0,OPB<<1};      // CMD = 1011: SHL1_B
         RES<=temp; end
   else
   ERR<=1'b1;
@@ -498,29 +498,29 @@ temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
     if (inp_valid == 2'b11) begin   // CMD = 1100: ROL_A_B
         case (OPB[2:0])
             3'b000: begin
-                    temp <= {{width{1'b0}}, OPA};
+                    temp = {{width{1'b0}}, OPA};
                     RES <= temp;
             end
             3'b001: begin
-                    temp <= {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
+                    temp = {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
                     RES <= temp;
             end
             3'b010: begin
                     if(OPB_1 == 0)
-                        temp <= {{width{1'b0}}, OPA};
+                        temp = {{width{1'b0}}, OPA};
                     else
-                        temp <= {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                     RES <= temp;
             end
             3'b011: begin
-                    temp <= {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                    temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                     RES <= temp;
             end
             default: begin
                     if (OPB_1 == 0)
-                        temp <= {{width{1'b0}}, OPA};
+                        temp = {{width{1'b0}}, OPA};
                     else
-                        temp <= {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                     RES <= temp;
             end
         endcase
@@ -543,29 +543,29 @@ end
     if (inp_valid == 2'b11) begin
         case (OPB[2:0])
             3'b000: begin
-                    temp <= {{width{1'b0}}, OPA};
+                    temp = {{width{1'b0}}, OPA};
                     RES <= temp;
             end
             3'b001: begin
-                    temp <= {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
+                    temp = {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
                     RES <= temp;
             end
             3'b010: begin
                     if(OPB_1 == 0)
-                        temp <= {{width{1'b0}}, OPA};
+                        temp = {{width{1'b0}}, OPA};
                     else
-                        temp <= {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                     RES <= temp;
             end
             3'b011: begin
-                    temp <= {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                    temp= {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                     RES <= temp;
             end
             default: begin
                     if (OPB_1 == 0)
-                        temp <= {{width{1'b0}}, OPA};
+                        temp = {{width{1'b0}}, OPA};
                     else
-                        temp <= {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                     RES <= temp;
             end
         endcase

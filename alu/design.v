@@ -91,8 +91,9 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
    begin
           if(inp_valid==2'b11)
           begin
-         RES<=OPA+OPB;
-          COUT<=RES[width]?1:0; end
+         temp<=OPA+OPB;
+          RES<=temp;
+            COUT<=RES[width]?1:0; end
           else
           ERR<=1'b1;
           end

@@ -511,39 +511,39 @@ temp={1'b0,OPA|OPB};     // CMD = 0010: OR
     if (inp_valid == 2'b11) begin   // CMD = 1100: ROL_A_B
         case (OPB[2:0])
             3'b000: begin
-                if(count1==0)
-                    temp = {{width{1'b0}}, OPA};
-                if(count1==1)
-                    RES = temp;
+             if(count1==0)
+              temp = {{width{1'b0}}, OPA};
+              if(count1==1)
+               RES = temp;
             end
             3'b001: begin
-                if(count1==0)
-                    temp = {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
-                if(count1==1)
-                    RES = temp;
+              if(count1==0)
+               temp = {{width{1'b0}}, {OPA[width-2:0], OPA[width-1]}};
+              if(count1==1)
+                 RES = temp;
             end
             3'b010: begin
                 if(count1==0) begin
-                    if(OPB_1 == 0)
-                        temp = {{width{1'b0}}, OPA};
+                  if(OPB_1 == 0)
+                    temp = {{width{1'b0}}, OPA};
                     else
-                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                     temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                 end
                 if(count1==1)
                     RES = temp;
             end
             3'b011: begin
                 if(count1==0)
-                    temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                 temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                 if(count1==1)
-                    RES = temp;
+                   RES = temp;
             end
             default: begin
                 if(count1==0) begin
                     if (OPB_1 == 0)
-                        temp = {{width{1'b0}}, OPA};
+                     temp = {{width{1'b0}}, OPA};
                     else
-                        temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
+                      temp = {{width{1'b0}}, ((OPA << OPB_1) | (OPA >> (width - OPB_1)))};
                 end
                 if(count1==1)
                     RES = temp;
@@ -565,39 +565,39 @@ end
     if (inp_valid == 2'b11) begin
         case (OPB[2:0])
             3'b000: begin
-                if(count1==0)
-                    temp = {{width{1'b0}}, OPA};
-                if(count1==1)
-                    RES = temp;
+             if(count1==0)
+                temp = {{width{1'b0}}, OPA};
+              if(count1==1)
+                 RES = temp;
             end
             3'b001: begin
-                if(count1==0)
-                    temp = {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
-                if(count1==1)
-                    RES = temp;
+            if(count1==0)
+               temp = {{width{1'b0}}, {OPA[0], OPA[width-1:1]}};
+              if(count1==1)
+                RES = temp;
             end
             3'b010: begin
                 if(count1==0) begin
-                    if(OPB_1 == 0)
-                        temp = {{width{1'b0}}, OPA};
+                  if(OPB_1 == 0)
+                    temp = {{width{1'b0}}, OPA};
                     else
-                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                     temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                 end
                 if(count1==1)
                     RES = temp;
             end
             3'b011: begin
                 if(count1==0)
-                    temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                   temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                 if(count1==1)
-                    RES = temp;
+                   RES = temp;
             end
             default: begin
                 if(count1==0) begin
                     if (OPB_1 == 0)
-                        temp = {{width{1'b0}}, OPA};
+                     temp = {{width{1'b0}}, OPA};
                     else
-                        temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
+                     temp = {{width{1'b0}}, ((OPA >> OPB_1) | (OPA << (width - OPB_1)))};
                 end
                 if(count1==1)
                     RES = temp;

@@ -61,7 +61,9 @@ module Eight_bit_ALU_rtl_design #(parameter width=4 ,cmd_width=4,out_width=2*wid
   reg [(out_width-1):0]temp;
   reg signed [(width-1):0] a;
   reg signed  [(width-1):0] b;
+  reg signed[(out_width-1):0] out;
   integer count=1;
+  integer count1=1;
   always@(posedge CLK or posedge RST)
           begin
   if(CE)                   // If clock enable is active high then check for other control signals
@@ -200,11 +202,13 @@ COUT<=RES[width]?1:0;
 begin
     if(inp_valid == 2'b11)
     begin
-    if(count==2)
+    if(count==2) begin
         temp = (OPA + 1'b1) * (OPB + 1'b1);
+        RES={width{1'bx}}; end
     if(count==3) begin
         RES  <= temp;
         ERR  <= 1'b0;
+        //count<=1;
         end
     end
     else
@@ -217,11 +221,13 @@ end
 begin
     if(inp_valid == 2'b11)
     begin
-    if(count==2)
-        temp <= (OPA >>1)*OPB;
-    if(count==3) begin
+    if(count1==2) begin
+        temp <= (OPA <<1)*OPB;
+           RES={width{1'bx}}; end
+    if(count1==3) begin
         RES  <= temp;
         ERR  <= 1'b0;
+       // count<=1;
         end
     end
     else
@@ -234,11 +240,11 @@ end
          begin
          if(inp_valid==2'b11)
          begin
-         a<=OPA;
-         b<=OPB;
-         temp={a+b};
-        RES<=temp;
-         if(RES[width]==1'b1)
+         a=OPA;
+         b=OPB;
+         out={a+b};
+        RES<=out;
+         if(a[width-1]==b[width-1] && RES[width-1]!=a[width-1])
          OFLOW<=1'b1;
          else
          OFLOW<=1'b0;
@@ -268,11 +274,11 @@ end
  4'b1100: begin
           if(inp_valid==2'b11)
          begin
-         a<=OPA;
-         b<=OPB;
-         temp={a-b};
-        RES<=temp;
-         if(RES[width]==1)
+         a=OPA;
+         b=OPB;
+         out={a-b};
+        RES<=out;
+         if(a[width-1]!=b[width-1] && RES[width-1]!=a[width-1])
          OFLOW<=1'b1;
          else
          OFLOW<=1'b0;
@@ -586,14 +592,32 @@ always@(posedge CLK or posedge RST)
  if(RST)
         count<=1;
         else
-         if(CMD==4'b1001 ||CMD==4'b1010)
+         if(CMD==4'b1001 )
+        // count<=1;
          begin
          if(count<=3)
          begin
          count<=count+1;
          end
+        
          else
          count<=1;
+      end
+  end
+always@(posedge CLK or posedge RST)
+ begin
+ if(RST)
+        count1<=1;
+        else
+         if(CMD==4'b1010)
+        // count<=1;
+         begin
+         if(count1<=3)
+         begin
+         count1<=count1+1;
+         end
+         else
+         count1<=1;
       end
   end
 

@@ -21,7 +21,7 @@ module Eight_bit_ALU_rtl_design #(
     integer count = 1;
     integer count1 = 1;
 
-    // --- Sequential Logic: Output Registering ---
+    
     always @(posedge CLK or posedge RST) begin
         if (RST) begin
             RES <= 0; COUT <= 0; OFLOW <= 0; G <= 0; E <= 0; L <= 0; ERR <= 0;

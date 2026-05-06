@@ -94,15 +94,29 @@ module Eight_bit_ALU_rtl_design #(
                         temp_oflow = (OPA < (OPB + CIN));
                     end else temp_err = 1'b1;
                 end
-                4'b0100: if(inp_valid[0]) temp_res = OPA + 1'b1; else temp_err = 1'b1;
-                4'b0101: if(inp_valid[0]) temp_res = OPA - 1'b1; else temp_err = 1'b1;
-                4'b0110: if(inp_valid[1]) temp_res = OPB + 1'b1; else temp_err = 1'b1;
-                4'b0111: if(inp_valid[1]) temp_res = OPB - 1'b1; else temp_err = 1'b1;
+                4'b0100: if(inp_valid[0]) 
+                            temp_res = OPA + 1'b1;
+                        else 
+                            temp_err = 1'b1;
+                4'b0101: if(inp_valid[0]) 
+                            temp_res = OPA - 1'b1;
+                        else
+                            temp_err = 1'b1;
+                4'b0110: if(inp_valid[1])
+                            temp_res = OPB + 1'b1;
+                        else
+                            temp_err = 1'b1;
+                4'b0111: if(inp_valid[1])
+                            temp_res = OPB - 1'b1;
+                        else
+                            temp_err = 1'b1;
                 4'b1000: if(inp_valid == 2'b11) begin
                             temp_e = (OPA == OPB); 
                             temp_g = (OPA > OPB); 
                             temp_l = (OPA < OPB);
-                         end else temp_err = 1'b1;
+                         end 
+                        else
+                            temp_err = 1'b1;
                 4'b1001: if(inp_valid == 2'b11) 
                                 temp_res = (OPA + 1'b1) * (OPB + 1'b1); 
                             else

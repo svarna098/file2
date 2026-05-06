@@ -3,7 +3,7 @@
 module Eight_bit_ALU_rtl_design #(
     parameter width = 8, 
     parameter cmd_width = 4, 
-    parameter out_width = 16 
+    parameter out_width = 2*width 
 ) (
     input [(width-1):0] OPA, OPB,
     input CLK, RST, CE, MODE, CIN,

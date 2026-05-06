@@ -1,3 +1,24 @@
+//`timescale 1ns / 1ps
+//////////////////////////////////////////////////////////////////////////////////
+// Company: 
+// Engineer: 
+// 
+// Create Date: 06.05.2026 12:53:28
+// Design Name: 
+// Module Name: design_alu
+// Project Name: 
+// Target Devices: 
+// Tool Versions: 
+// Description: 
+// 
+// Dependencies: 
+// 
+// Revision:
+// Revision 0.01 - File Created
+// Additional Comments:
+// 
+//////////////////////////////////////////////////////////////////////////////////
+
 // Code your design here
 //`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
@@ -130,16 +151,17 @@ COUT<=RES[width]?1:0;
          4'b0110:
          begin
          if(inp_valid==2'b10 ||inp_valid==2'b11)
+         begin
          temp<=OPB+1;    // CMD = 0110: INC_B
-        RES<=temp;
+        RES<=temp; end
          else
          ERR<=1'b1;
          end
          4'b0111:
          begin
-         if(inp_valid==2'b10 ||inp_valid==2'b11)
+         if(inp_valid==2'b10 ||inp_valid==2'b11) begin
          temp<=OPB-1;    // CMD = 0111: DEC_B
-        RES<=temp;
+        RES<=temp;  end
          else
          ERR<=1'b1;
          end
@@ -321,91 +343,92 @@ COUT<=RES[width]?1:0;
   // CMD is the binary code value of the Logical Operation
  
  4'b0000:begin
- if(inp_valid==2'b11)
+ if(inp_valid==2'b11) begin
  temp<={1'b0,OPA&OPB};
-        RES<=temp;
+        RES<=temp; end
  else
  ERR<=1'b1;     // CMD = 0000: AND
  end
  4'b0001:begin
-  if(inp_valid==2'b11)
+  if(inp_valid==2'b11) begin
   temp<={1'b0,~(OPA&OPB)};
-        RES<=temp;
+        RES<=temp; end
   else
   ERR<=1'b1;
   end  // CMD = 0001: NAND
  4'b0010:begin
-  if(inp_valid==2'b11)
+  if(inp_valid==2'b11) begin
 temp<={1'b0,OPA|OPB};     // CMD = 0010: OR
-        RES<=temp;
+        RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b0011:begin
-  if(inp_valid==2'b11)
+  if(inp_valid==2'b11) begin
   temp<={1'b0,~(OPA|OPB)};  // CMD = 0011: NOR
-        RES<=temp;
+        RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b0100:begin
-  if(inp_valid==2'b11)
+  if(inp_valid==2'b11) begin
   temp<={1'b0,OPA^OPB};     // CMD = 0100: XOR
-        RES<=temp;
+        RES<=temp;  end
   else
   ERR<=1'b1;
   end
  4'b0101:begin
-  if(inp_valid==2'b11)
+  if(inp_valid==2'b11) begin
   temp<={1'b0,~(OPA^OPB)};  // CMD = 0101: XNOR
-        RES<=temp;
+        RES<=temp;  end 
   else
   ERR<=1'b1;
   end
  4'b0110:begin
-  if(inp_valid==2'b01 ||inp_valid==2'b11)
+  if(inp_valid==2'b01 ||inp_valid==2'b11)  begin
   temp<={1'b0,~OPA};        // CMD = 0110: NOT_A
-        RES<=temp;
+        RES<=temp; end 
   else
   ERR<=1'b1;
   end
  4'b1000:begin
- if(inp_valid==2'b01 ||inp_valid==2'b11)
+ if(inp_valid==2'b01 ||inp_valid==2'b11) begin
 
   temp<={1'b0,OPA>>1};      // CMD = 1000: SHR1_A
-        RES<=temp;
+        RES<=temp; end 
   else
   ERR<=1'b1;
   end
  
  4'b1001:begin
-  if(inp_valid==2'b01 ||inp_valid==2'b11)
+  if(inp_valid==2'b01 ||inp_valid==2'b11) begin
   temp<={1'b0,OPA<<1};      // CMD = 1001: SHL1_A
-        RES<=temp;
-  else
+        RES<=temp;  end
+        
+  else 
   ERR<=1'b1;
   end
  
  
  4'b0111:begin
-  if(inp_valid==2'b10 ||inp_valid==2'b11)
+  if(inp_valid==2'b10 ||inp_valid==2'b11) begin
   temp<={1'b0,~OPB};        // CMD = 0111: NOT_B
-        RES<=temp;
+        RES<=temp;  end
   else
   ERR<=1'b1;
   end
  
  4'b1010:begin
- if(inp_valid==2'b10 ||inp_valid==2'b11)
+ if(inp_valid==2'b10 ||inp_valid==2'b11) begin
   temp<={1'b0,OPB>>1};      // CMD = 1010: SHR1_B
-        RES<=temp;
+        RES<=temp; end
   else
   ERR<=1'b1;
   end
  4'b1011:begin
-  if(inp_valid==2'b10 ||inp_valid==2'b11)
+  if(inp_valid==2'b10 ||inp_valid==2'b11) begin
   temp<={1'b0,OPB<<1};      // CMD = 1011: SHL1_B
-        RES<=temp;
+        RES<=temp; end
   else
   ERR<=1'b1;
   end

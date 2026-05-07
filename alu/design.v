@@ -20,8 +20,8 @@ module Eight_bit_ALU_rtl_design #(
     reg signed [width-1:0] A_signed, B_signed;
     integer count = 1;
     integer count1 = 1;
-
     
+    // --- Sequential Logic: Output Registering ---
     always @(posedge CLK or posedge RST) begin
         if (RST) begin
             RES <= 0; COUT <= 0; OFLOW <= 0; G <= 0; E <= 0; L <= 0; ERR <= 0;
@@ -94,29 +94,15 @@ module Eight_bit_ALU_rtl_design #(
                         temp_oflow = (OPA < (OPB + CIN));
                     end else temp_err = 1'b1;
                 end
-                4'b0100: if(inp_valid[0]) 
-                            temp_res = OPA + 1'b1;
-                        else 
-                            temp_err = 1'b1;
-                4'b0101: if(inp_valid[0]) 
-                            temp_res = OPA - 1'b1;
-                        else
-                            temp_err = 1'b1;
-                4'b0110: if(inp_valid[1])
-                            temp_res = OPB + 1'b1;
-                        else
-                            temp_err = 1'b1;
-                4'b0111: if(inp_valid[1])
-                            temp_res = OPB - 1'b1;
-                        else
-                            temp_err = 1'b1;
+                4'b0100: if(inp_valid[0]) temp_res = OPA + 1'b1; else temp_err = 1'b1;
+                4'b0101: if(inp_valid[0]) temp_res = OPA - 1'b1; else temp_err = 1'b1;
+                4'b0110: if(inp_valid[1]) temp_res = OPB + 1'b1; else temp_err = 1'b1;
+                4'b0111: if(inp_valid[1]) temp_res = OPB - 1'b1; else temp_err = 1'b1;
                 4'b1000: if(inp_valid == 2'b11) begin
                             temp_e = (OPA == OPB); 
                             temp_g = (OPA > OPB); 
                             temp_l = (OPA < OPB);
-                         end 
-                        else
-                            temp_err = 1'b1;
+                         end else temp_err = 1'b1;
                 4'b1001: if(inp_valid == 2'b11) 
                                 temp_res = (OPA + 1'b1) * (OPB + 1'b1); 
                             else
@@ -203,13 +189,21 @@ module Eight_bit_ALU_rtl_design #(
                         else    
                              temp_err = 1'b1;
                 4'b1100: if(inp_valid == 2'b11) begin
-                            if (|OPB[(width-1):3]) temp_err = 1'b1; 
-                            else temp_res = {{width{1'b0}}, (OPA << OPB[2:0]) | (OPA >> (width - OPB[2:0]))};
-                         end else temp_err = 1'b1;
-                4'b1101: if(inp_valid == 2'b11) begin
-                            if (|OPB[(width-1):3]) temp_err = 1'b1; 
-                            else temp_res = {{width{1'b0}}, (OPA >> OPB[2:0]) | (OPA << (width - OPB[2:0]))};
-                         end else temp_err = 1'b1;
+            if  (OPB >> 4)
+             temp_err = 1'b1; 
+            else 
+              temp_res = {{width{1'b0}}, (OPA << OPB[2:0]) | (OPA >> (width - OPB[2:0]))};
+         end
+          else 
+               temp_err = 1'b1;
+4'b1101: if(inp_valid == 2'b11) begin
+            if (OPB >> 4)
+              temp_err = 1'b1; 
+            else 
+              temp_res = {{width{1'b0}}, (OPA >> OPB[2:0]) | (OPA << (width - OPB[2:0]))};
+         end 
+         else
+              temp_err = 1'b1;
                 default: temp_err = 1'b1;
             endcase
         end

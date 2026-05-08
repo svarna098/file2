@@ -115,11 +115,12 @@ module Eight_bit_ALU_rtl_design #(
                             A_signed = OPA; 
                             B_signed = OPB;
                             temp_signed = A_signed + B_signed;
-                             temp_res = temp_signed;
-                            temp_oflow = temp_res[width-1];
+                            temp_res = temp_signed;
+                            if(A_signed ==B_signed && temp_res !=A_signed) begin
+                                 temp_oflow = 1'b1; end
                             temp_e = (A_signed == B_signed);
-                             temp_l = (A_signed < B_signed);
-                              temp_g = (A_signed > B_signed);
+                            temp_l = (A_signed < B_signed);
+                            temp_g = (A_signed > B_signed);
                          end 
                          else
                              temp_err = 1'b1;
@@ -128,7 +129,8 @@ module Eight_bit_ALU_rtl_design #(
                              B_signed = OPB;
                             temp_signed = A_signed - B_signed; 
                             temp_res = temp_signed;
-                            temp_oflow = temp_res[width-1];
+                             if(A_signed !=B_signed && temp_res !=A_signed) begin
+                                  temp_oflow = 1'b1; end
                             temp_e = (A_signed == B_signed);
                             temp_l = (A_signed < B_signed);
                             temp_g = (A_signed > B_signed);
